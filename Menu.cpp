@@ -102,6 +102,14 @@ void Menu::loopDisplay() {
   }
 }
 
+void Menu::stopChainedLoop() {
+  continueLooping = false;
+  Menu *prevMenu = menuToReturn;
+
+  while (prevMenu != nullptr)
+    prevMenu->continueLooping = false;
+}
+
 void Menu::stopLoop() { stopChainedLoop(); }
 
 void Menu::clear() {
