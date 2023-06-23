@@ -81,6 +81,14 @@ private:
       size_t columnIndex = 1;
 
       while (iss >> word) {
+        word.erase(
+            std::remove_if(word.begin(), word.end(),
+                           [](unsigned char c) { return !std::isalnum(c); }),
+            word.end());
+
+        if (word.empty())
+          continue;
+
         auto it = std::find_if(invertedIndex.begin(), invertedIndex.end(),
                                [&word](auto w) { return w.first == word; });
 
