@@ -137,11 +137,11 @@ private:
     std::cout << "Digite a palavra a ser procurada: ";
     std::cin >> strToSearch;
 
-    auto ocurrences = binarySearch(strToSearch);
+    auto ocurrencesIndex = binarySearch(strToSearch);
 
     std::cout << "Ocorrências encontradas: ";
 
-    for (auto &ocurrence : invertedIndex[ocurrences].second) {
+    for (auto &ocurrence : invertedIndex[ocurrencesIndex].second) {
       std::cout << ocurrence.line << ':' << ocurrence.column << ' ';
     }
 
