@@ -139,13 +139,18 @@ private:
 
     auto ocurrencesIndex = binarySearch(strToSearch);
 
+    if (ocurrencesIndex < 0) {
+      std::cout << "Nenhuma ocorrencia encontrada\n\n";
+      return;
+    }
+
     std::cout << "Ocorrências encontradas: ";
 
     for (auto &ocurrence : invertedIndex[ocurrencesIndex].second) {
       std::cout << ocurrence.line << ':' << ocurrence.column << ' ';
     }
 
-    std::cout << '\n';
+    std::cout << "\n\n";
   }
 
   ssize_t binarySearch(std::string &word) {
