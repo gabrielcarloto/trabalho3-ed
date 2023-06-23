@@ -134,6 +134,7 @@ private:
 
   void searchWord() {
     std::string strToSearch;
+    std::cout << "Digite a palavra a ser procurada: ";
     std::cin >> strToSearch;
 
     auto ocurrences = binarySearch(strToSearch);
