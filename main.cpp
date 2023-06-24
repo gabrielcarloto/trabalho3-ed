@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include <algorithm>
+#include <cctype>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -90,11 +91,13 @@ private:
         if (word.empty())
           continue;
 
+        auto lower = toLowercase(word);
+
         auto it = std::find_if(invertedIndex.begin(), invertedIndex.end(),
-                               [&word](auto w) { return w.first == word; });
+                               [&lower](auto w) { return w.first == lower; });
 
         if (it == invertedIndex.end()) {
-          invertedIndex.emplace_back(word, std::vector<Position>());
+          invertedIndex.emplace_back(lower, std::vector<Position>());
           invertedIndex.back().second.push_back({lineIndex, columnIndex});
         } else {
           (*it).second.push_back({lineIndex, columnIndex});
@@ -180,6 +183,17 @@ private:
     }
 
     return -1;
+  }
+
+  std::string toLowercase(const std::string &str) {
+    std::string result;
+    result.reserve(str.length());
+
+    for (char c : str) {
+      result += std::tolower(c);
+    }
+
+    return result;
   }
 };
 
