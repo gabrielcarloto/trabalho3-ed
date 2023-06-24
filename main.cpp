@@ -156,13 +156,68 @@ private:
       return;
     }
 
-    std::cout << "Ocorrências encontradas: ";
+    std::cout << "Ocorrências encontradas:\n";
 
-    for (auto &ocurrence : invertedIndex[ocurrencesIndex].second) {
-      std::cout << ocurrence.line << ':' << ocurrence.column << ' ';
+    printOcurrences(invertedIndex[ocurrencesIndex].second,
+                    invertedIndex[ocurrencesIndex].first.size());
+
+    std::cout << "\n";
+  }
+
+  void printOcurrences(const std::vector<Position> &ocurrences, size_t length) {
+    for (auto &ocurrence : ocurrences) {
+      std::cout << ocurrence.line << ':' << ocurrence.column << '\t'
+                << getStringToPrint(lines[ocurrence.line - 1], ocurrence.column,
+                                    length)
+                << '\n';
+    }
+  }
+
+  std::string getStringToPrint(const std::string &line, size_t colStart,
+                               size_t length, size_t lengthToInclude = 20) {
+    bool doubleLengthToInclude = false;
+    size_t lengthIncluded = 0, startIndex = 0;
+    std::string result;
+
+    if (length < colStart) {
+      bool foundSpace = false;
+      size_t i = 0;
+
+      for (i = colStart - lengthToInclude; i > 0 && !foundSpace; i--) {
+        if (line[i] == ' ')
+          foundSpace = true;
+      }
+
+      if (foundSpace)
+        i++;
+
+      doubleLengthToInclude = true;
+      startIndex = i > line.length() ? 0 : i;
     }
 
-    std::cout << "\n\n";
+    if (doubleLengthToInclude)
+      lengthToInclude *= 2;
+
+    lengthToInclude += length;
+
+    std::string sub = line.substr(startIndex);
+    std::istringstream iss(sub);
+    std::string word;
+
+    while (lengthIncluded < lengthToInclude && iss >> word) {
+      result += word + ' ';
+      lengthIncluded = result.size() - (result.size() > length ? length : 0);
+    }
+
+    result.pop_back();
+
+    if (std::isalnum(result[result.size() - 1]))
+      result += "...";
+
+    if (startIndex && std::isalnum(result[0]))
+      return "..." + result;
+
+    return result;
   }
 
   ssize_t binarySearch(std::string &word) {
