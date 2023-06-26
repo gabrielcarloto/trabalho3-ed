@@ -82,22 +82,16 @@ private:
       size_t columnIndex = 1;
 
       while (iss >> word) {
-        word.erase(std::remove_if(word.begin(), word.end(),
-                                  [](unsigned char c) {
-                                    return !std::isalnum(c) && c != '-';
-                                  }),
-                   word.end());
+        filterAlphanumToLowercase(word);
 
         if (word.empty())
           continue;
 
-        auto lower = toLowercase(word);
-
         auto it = std::find_if(invertedIndex.begin(), invertedIndex.end(),
-                               [&lower](auto w) { return w.first == lower; });
+                               [&word](auto w) { return w.first == word; });
 
         if (it == invertedIndex.end()) {
-          invertedIndex.emplace_back(lower, std::vector<Position>());
+          invertedIndex.emplace_back(word, std::vector<Position>());
           invertedIndex.back().second.push_back({lineIndex, columnIndex});
         } else {
           (*it).second.push_back({lineIndex, columnIndex});
@@ -240,15 +234,20 @@ private:
     return -1;
   }
 
-  std::string toLowercase(const std::string &str) {
-    std::string result;
-    result.reserve(str.length());
+  void filterAlphanumToLowercase(std::string &str) {
+    auto it = str.begin();
 
-    for (char c : str) {
-      result += std::tolower(c);
+    while (it != str.end()) {
+      if (std::isalnum(*it)) {
+        // https://en.cppreference.com/w/cpp/string/byte/tolower#Notes
+        *it = static_cast<char>(std::tolower(static_cast<unsigned char>(*it)));
+        it++;
+      } else if (*it != '-') {
+        it = str.erase(it);
+      } else {
+        it++;
+      }
     }
-
-    return result;
   }
 };
 
